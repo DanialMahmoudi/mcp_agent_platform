@@ -1,0 +1,65 @@
+# -----------------------------
+# Python / Backend
+# -----------------------------
+backend/.venv/              # virtual environment
+backend/__pycache__/        # compiled Python files
+backend/*.py[cod]           # bytecode files
+backend/*.pyo
+backend/*.pyd
+backend/.Python             # sometimes created by venv
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.vscode/            # optional if you have VSCode settings in backend
+backend/app/__pycache__/main.cpython-312.pyc
+
+# -----------------------------
+# Node / Frontend
+# -----------------------------
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+frontend/.pnp
+frontend/.pnp.js
+frontend/.turbo
+
+# Frontend testing & Playwright
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/playwright/*
+
+# Debug logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# Misc
+frontend/.DS_Store
+frontend/*.pem
+frontend/.vercel
+frontend/.env*.local
+
+# -----------------------------
+# Global / Root
+# -----------------------------
+.env                        # your root environment file
+.vscode/                    # workspace settings
+.DS_Store                   # macOS file system metadata
+*.log                       # log files
+test.txt
+
+# -----------------------------
+# Optional
+# -----------------------------
+*.swp                       # vim swap files
+*.swo
+.env
+.env.development.local
+testtxt
+.vercel
