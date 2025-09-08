@@ -1,4 +1,4 @@
-export const DEFAULT_CHAT_MODEL: string = 'chat-model';
+export const DEFAULT_CHAT_MODEL: string = 'llama3.2:latest'; // Default to Llama 3.2
 
 export interface ChatModel {
   id: string;
@@ -9,12 +9,12 @@ export interface ChatModel {
 export const chatModels: Array<ChatModel> = [
   {
     id: 'chat-model',
-    name: 'Grok Vision',
-    description: 'Advanced multimodal model with vision and text capabilities',
+    name: 'Llama 3.2',
+    description: 'Lightweight and fast model for general-purpose tasks.',
   },
   {
     id: 'chat-model-reasoning',
-    name: 'Grok Reasoning',
+    name: 'Llama 3.2 Reasoning',
     description: 'Uses advanced chain-of-thought reasoning for complex problems',
   },
 ];
