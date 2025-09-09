@@ -13,18 +13,28 @@ import { useSession } from 'next-auth/react';
 
 export default function Page() {
   const router = useRouter();
+  // 1st step in sign up
+  console.log('In register: 1st Step: Register page rendered');
 
   const [email, setEmail] = useState('');
+  // 2nd step in sign up
+  console.log(`2nd Step: Email state initialized to empty string ${email}`);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  // 3rd step in sign up
+  console.log(`3rd Step: isSuccessful state initialized to ${isSuccessful}`);
 
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
     register,
     {
       status: 'idle',
     },
-  );
+  ); 
+  // 4th step in sign up
+  console.log(`4th Step: useActionState initialized with register action ${JSON.stringify(state)}`);
 
   const { update: updateSession } = useSession();
+  // 5th step in sign up
+  console.log(`5th Step: useSession hook called to manage session state ${JSON.stringify(updateSession)}`);
 
   useEffect(() => {
     if (state.status === 'user_exists') {
@@ -44,11 +54,15 @@ export default function Page() {
       router.refresh();
     }
   }, [state]);
+  // 6th step in sign up
+  console.log('6th Step: useEffect set up to monitor action state changes');
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
     formAction(formData);
   };
+  // 7th step in sign up
+  console.log('7th Step: handleSubmit function defined to process form submission');
 
   return (
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
