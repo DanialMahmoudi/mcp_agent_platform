@@ -65,12 +65,26 @@ export function getStreamContext() {
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;
 
-  try {
-    const json = await request.json();
-    requestBody = postRequestBodySchema.parse(json);
-  } catch (_) {
-    return new ChatSDKError('bad_request:api').toResponse();
+  const json = await request.json();
+  // console.log('Received request body:', json);
+
+  // Validate the request body against the schema
+  const parseResult = postRequestBodySchema.safeParse(json);
+  // console.log('Schema validation result:', parseResult);
+
+  if (!parseResult.success) {
+    console.error('Schema validation failed:', parseResult.error.format());
+    return new Response(
+      JSON.stringify({
+        message: 'Schema validation failed',
+        errors: parseResult.error.format(),
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
   }
+
+  requestBody = parseResult.data;
+
 
   try {
     const {
