@@ -64,3 +64,5 @@ test.txt
 testtxt
 .vercel
 frontend/app/tree.txt
+frontend/public/fonts/Geist_Mono/GeistMono-VariableFont_wght.ttf
+frontend/public/fonts/Geist/Geist-VariableFont_wght.ttf
