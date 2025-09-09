@@ -13,9 +13,15 @@ import { useSession } from 'next-auth/react';
 
 export default function Page() {
   const router = useRouter();
+  // 1st step in Auth
+  console.log('In AUTH: 1st Step: Login page rendered');
 
   const [email, setEmail] = useState('');
+  // 2nd step in Auth
+  console.log(`2nd Step: Email state initialized to empty string ${email}`);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  // 3rd step in Auth
+  console.log(`3rd Step: isSuccessful state initialized to ${isSuccessful}`);
 
   const [state, formAction] = useActionState<LoginActionState, FormData>(
     login,
@@ -23,8 +29,12 @@ export default function Page() {
       status: 'idle',
     },
   );
+  // 4th step in Auth
+  console.log(`4th Step: useActionState initialized with login action ${JSON.stringify(state)}`);
 
   const { update: updateSession } = useSession();
+  // 5th step in Auth
+  console.log(`5th Step: useSession hook called to manage session state ${JSON.stringify(updateSession)}`);
 
   useEffect(() => {
     if (state.status === 'failed') {
@@ -44,10 +54,15 @@ export default function Page() {
     }
   }, [state.status]);
 
+  // 6th step in Auth
+  console.log('6th Step: useEffect set up to monitor action state changes');
+
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
     formAction(formData);
   };
+  // 7th step in Auth
+  console.log('7th Step: handleSubmit function defined to process form submission');
 
   return (
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
