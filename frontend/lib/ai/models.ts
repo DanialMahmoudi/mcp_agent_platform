@@ -14,7 +14,7 @@ export const chatModels: Array<ChatModel> = [
   },
   {
     id: 'chat-model-reasoning',
-    name: 'Llama 3.2:latest Reasoning',
+    name: 'Qwen3:14b Reasoning',
     description: 'Uses advanced chain-of-thought reasoning for complex problems',
   },
 ];
