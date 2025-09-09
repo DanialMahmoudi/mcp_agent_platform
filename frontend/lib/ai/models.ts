@@ -9,12 +9,12 @@ export interface ChatModel {
 export const chatModels: Array<ChatModel> = [
   {
     id: 'chat-model',
-    name: 'Llama 3.2',
+    name: 'Llama 3.2:latest',
     description: 'Lightweight and fast model for general-purpose tasks.',
   },
   {
     id: 'chat-model-reasoning',
-    name: 'Llama 3.2 Reasoning',
+    name: 'Llama 3.2:latest Reasoning',
     description: 'Uses advanced chain-of-thought reasoning for complex problems',
   },
 ];
