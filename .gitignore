@@ -63,3 +63,4 @@ test.txt
 .env.development.local
 testtxt
 .vercel
+frontend/app/tree.txt
