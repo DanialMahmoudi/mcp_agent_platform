@@ -9,12 +9,13 @@ export interface ChatModel {
 export const chatModels: Array<ChatModel> = [
   {
     id: 'chat-model',
-    name: 'Llama 3.2:latest',
-    description: 'Lightweight and fast model for general-purpose tasks.',
+    name: 'Grok Vision',
+    description: 'Advanced multimodal model with vision and text capabilities',
   },
   {
     id: 'chat-model-reasoning',
-    name: 'Qwen3:14b Reasoning',
-    description: 'Uses advanced chain-of-thought reasoning for complex problems',
+    name: 'Grok Reasoning',
+    description:
+      'Uses advanced chain-of-thought reasoning for complex problems',
   },
 ];

@@ -1,32 +1,36 @@
-import { customProvider } from 'ai';
-import { createOllama } from 'ai-sdk-ollama';
 import {
-  artifactModel,
-  chatModel,
-  reasoningModel,
-  titleModel,
-} from './models.test';
+  customProvider,
+  extractReasoningMiddleware,
+  wrapLanguageModel,
+} from 'ai';
+import { gateway } from '@ai-sdk/gateway';
 import { isTestEnvironment } from '../constants';
 
-// Create an Ollama provider instance
-const ollamaInstance = createOllama({
-  baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434', // your local Ollama server
-});
-
 export const myProvider = isTestEnvironment
-  ? customProvider({
-      languageModels: {
-        'chat-model': ollamaInstance('llama3.2:latest'), // simple chat model
-        'chat-model-reasoning': ollamaInstance('qwen3:14b', { reasoning: true }), // reasoning model
-        'title-model': ollamaInstance('llama3.2:latest'),
-        'artifact-model': ollamaInstance('llama3.2:latest'),
-      },
-    })
+  ? (() => {
+      const {
+        artifactModel,
+        chatModel,
+        reasoningModel,
+        titleModel,
+      } = require('./models.mock');
+      return customProvider({
+        languageModels: {
+          'chat-model': chatModel,
+          'chat-model-reasoning': reasoningModel,
+          'title-model': titleModel,
+          'artifact-model': artifactModel,
+        },
+      });
+    })()
   : customProvider({
       languageModels: {
-        'chat-model': ollamaInstance('llama3.2:latest'), // simple chat model
-        'chat-model-reasoning': ollamaInstance('qwen3:14b', { reasoning: true }), // reasoning model
-        'title-model': ollamaInstance('llama3.2:latest'),
-        'artifact-model': ollamaInstance('llama3.2:latest'),
+        'chat-model': gateway.languageModel('xai/grok-2-vision-1212'),
+        'chat-model-reasoning': wrapLanguageModel({
+          model: gateway.languageModel('xai/grok-3-mini'),
+          middleware: extractReasoningMiddleware({ tagName: 'think' }),
+        }),
+        'title-model': gateway.languageModel('xai/grok-2-1212'),
+        'artifact-model': gateway.languageModel('xai/grok-2-1212'),
       },
     });

@@ -2,6 +2,7 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   JsonToSseTransformStream,
+  type LanguageModelUsage,
   smoothStream,
   stepCountIs,
   streamText,
@@ -17,6 +18,7 @@ import {
   saveChat,
   saveMessages,
 } from '@/lib/db/queries';
+import { updateChatLastContextById } from '@/lib/db/queries';
 import { convertToUIMessages, generateUUID } from '@/lib/utils';
 import { generateTitleFromUserMessage } from '../../actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
@@ -65,26 +67,12 @@ export function getStreamContext() {
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;
 
-  const json = await request.json();
-  // console.log('Received request body:', json);
-
-  // Validate the request body against the schema
-  const parseResult = postRequestBodySchema.safeParse(json);
-  // console.log('Schema validation result:', parseResult);
-
-  if (!parseResult.success) {
-    console.error('Schema validation failed:', parseResult.error.format());
-    return new Response(
-      JSON.stringify({
-        message: 'Schema validation failed',
-        errors: parseResult.error.format(),
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+  try {
+    const json = await request.json();
+    requestBody = postRequestBodySchema.parse(json);
+  } catch (_) {
+    return new ChatSDKError('bad_request:api').toResponse();
   }
-
-  requestBody = parseResult.data;
-
 
   try {
     const {
@@ -163,6 +151,8 @@ export async function POST(request: Request) {
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
 
+    let finalUsage: LanguageModelUsage | undefined;
+
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
@@ -193,6 +183,10 @@ export async function POST(request: Request) {
             isEnabled: isProductionEnvironment,
             functionId: 'stream-text',
           },
+          onFinish: ({ usage }) => {
+            finalUsage = usage;
+            dataStream.write({ type: 'data-usage', data: usage });
+          },
         });
 
         result.consumeStream();
@@ -215,6 +209,17 @@ export async function POST(request: Request) {
             chatId: id,
           })),
         });
+
+        if (finalUsage) {
+          try {
+            await updateChatLastContextById({
+              chatId: id,
+              context: finalUsage,
+            });
+          } catch (err) {
+            console.warn('Unable to persist last usage for chat', id, err);
+          }
+        }
       },
       onError: () => {
         return 'Oops, an error occurred!';
@@ -258,7 +263,7 @@ export async function DELETE(request: Request) {
 
   const chat = await getChatById({ id });
 
-  if (chat.userId !== session.user.id) {
+  if (chat?.userId !== session.user.id) {
     return new ChatSDKError('forbidden:chat').toResponse();
   }
 
