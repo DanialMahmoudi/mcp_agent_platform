@@ -1,36 +1,32 @@
+import { customProvider } from 'ai';
+import { createOllama } from 'ollama-ai-provider-v2';
 import {
-  customProvider,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
-} from 'ai';
-import { gateway } from '@ai-sdk/gateway';
+  artifactModel,
+  chatModel,
+  reasoningModel,
+  titleModel,
+} from './models.test';
 import { isTestEnvironment } from '../constants';
 
+// Create an Ollama provider instance
+const ollamaInstance = createOllama({
+  baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/api', // your local Ollama server
+});
+
 export const myProvider = isTestEnvironment
-  ? (() => {
-      const {
-        artifactModel,
-        chatModel,
-        reasoningModel,
-        titleModel,
-      } = require('./models.mock');
-      return customProvider({
-        languageModels: {
-          'chat-model': chatModel,
-          'chat-model-reasoning': reasoningModel,
-          'title-model': titleModel,
-          'artifact-model': artifactModel,
-        },
-      });
-    })()
+  ? customProvider({
+      languageModels: {
+        'chat-model': ollamaInstance('llama3.2:latest'), // simple chat model
+        'chat-model-reasoning': ollamaInstance('qwen3:14b'), // reasoning model
+        'title-model': ollamaInstance('llama3.2:latest'),
+        'artifact-model': ollamaInstance('llama3.2:latest'),
+      },
+    })
   : customProvider({
       languageModels: {
-        'chat-model': gateway.languageModel('xai/grok-2-vision-1212'),
-        'chat-model-reasoning': wrapLanguageModel({
-          model: gateway.languageModel('xai/grok-3-mini'),
-          middleware: extractReasoningMiddleware({ tagName: 'think' }),
-        }),
-        'title-model': gateway.languageModel('xai/grok-2-1212'),
-        'artifact-model': gateway.languageModel('xai/grok-2-1212'),
+        'chat-model': ollamaInstance('llama3.2:latest'), // simple chat model
+        'chat-model-reasoning': ollamaInstance('qwen3:14b'), // reasoning model
+        'title-model': ollamaInstance('llama3.2:latest'),
+        'artifact-model': ollamaInstance('llama3.2:latest'),
       },
     });
